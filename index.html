@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BD-FX | Smart Investment</title>
+    <title>BD-FX | Financial Engine</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -11,7 +11,6 @@
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: #0a0f1a; color: white; }
         .glass { background: rgba(22, 27, 42, 0.8); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.05); }
         .pkg-card { transition: all 0.3s ease; border: 1px solid rgba(59, 130, 246, 0.1); }
-        .pkg-card:hover { border-color: rgba(59, 130, 246, 0.5); transform: translateY(-5px); }
     </style>
 </head>
 <body>
@@ -19,70 +18,70 @@
     <nav class="p-6 border-b border-gray-800 flex justify-between items-center sticky top-0 z-50 bg-[#0a0f1a]/90 backdrop-blur-md">
         <div class="text-xl font-black italic tracking-tighter text-blue-500">BD-FX</div>
         <div class="flex gap-2">
-            <button id="admin-btn" onclick="toggleAdmin()" class="hidden text-[10px] font-bold text-yellow-500 border border-yellow-500/20 px-4 py-2 rounded-full uppercase">Admin</button>
+            <button id="admin-btn" onclick="toggleAdmin()" class="hidden text-[10px] font-bold text-yellow-500 border border-yellow-500/20 px-4 py-2 rounded-full uppercase">Admin Control</button>
             <button id="login-nav" onclick="toggleModal()" class="text-[10px] font-bold text-blue-500 border border-blue-500/20 px-4 py-2 rounded-full uppercase">Login</button>
         </div>
     </nav>
 
-    <div id="dashboard" class="hidden p-6 max-w-2xl mx-auto">
-        
-        <div class="bg-gradient-to-br from-blue-600 to-indigo-900 p-8 rounded-[2.5rem] shadow-2xl mb-8 text-center relative overflow-hidden">
+    <div id="dashboard" class="hidden p-6 max-w-2xl mx-auto pt-8">
+        <div class="bg-gradient-to-br from-blue-600 to-indigo-900 p-8 rounded-[2.5rem] shadow-2xl mb-8 text-center border border-white/10">
             <p class="text-[10px] uppercase font-black text-blue-100 mb-1 tracking-widest">Available Balance</p>
             <h2 class="text-5xl font-black italic">৳<span id="user-balance">0.00</span></h2>
-            <div class="flex gap-3 mt-6">
-                <button onclick="showPay('Deposit')" class="flex-1 bg-white/10 py-3 rounded-xl text-[10px] font-bold uppercase">Deposit</button>
-                <button onclick="showPay('Withdraw')" class="flex-1 bg-white/10 py-3 rounded-xl text-[10px] font-bold uppercase">Withdraw</button>
+            <div class="flex gap-3 mt-8">
+                <button onclick="openPayment('Deposit')" class="flex-1 bg-white/10 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest">Deposit</button>
+                <button onclick="openWithdraw()" class="flex-1 bg-black/20 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest">Withdraw</button>
             </div>
         </div>
 
-        <div id="active-pkg-area" class="hidden mb-8">
-            <h3 class="text-[10px] font-black text-gray-500 uppercase mb-4 tracking-[0.2em]">Your Active Plans</h3>
-            <div id="active-list" class="space-y-4"></div>
+        <div id="w-history-area" class="mb-8">
+            <h3 class="text-[10px] font-black text-gray-500 uppercase mb-4 tracking-[0.2em]">Withdrawal History</h3>
+            <div id="w-history-list" class="space-y-3">
+                <p class="text-xs text-gray-600 italic">No history yet.</p>
+            </div>
         </div>
 
-        <div class="mb-20">
-            <h3 class="text-[10px] font-black text-gray-500 uppercase mb-4 tracking-[0.2em]">Available Packages</h3>
-            <div id="shop-list" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                </div>
+        <div id="active-pkg-area" class="hidden mb-10">
+            <h3 class="text-[10px] font-black text-gray-500 uppercase mb-4 tracking-[0.2em]">Active Profit Plans</h3>
+            <div id="active-list" class="space-y-3"></div>
         </div>
+        
+        <div id="shop-list" class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-20"></div>
+    </div>
 
-        <button onclick="logout()" class="w-full text-red-500 text-[10px] font-black uppercase tracking-widest opacity-50">Sign Out</button>
+    <div id="withdraw-modal" class="fixed inset-0 bg-black/95 flex items-center justify-center p-6 hidden z-[210] backdrop-blur-xl">
+        <div class="glass p-8 rounded-[3rem] w-full max-w-sm border border-white/10">
+            <h2 class="text-2xl font-black italic uppercase text-white mb-6 text-center">Withdrawal</h2>
+            <input type="number" id="w-amount" placeholder="Amount (৳)" class="w-full bg-black/40 p-4 rounded-xl border border-gray-800 mb-4 outline-none">
+            <input type="text" id="w-number" placeholder="bKash Number" class="w-full bg-black/40 p-4 rounded-xl border border-gray-800 mb-4 outline-none">
+            
+            <div id="password-section" class="mb-4">
+                <input type="password" id="w-pass" maxlength="6" placeholder="Withdrawal PIN" class="w-full bg-black/40 p-4 rounded-xl border border-blue-500 outline-none text-center tracking-[0.5em]">
+            </div>
+
+            <button onclick="submitWithdraw()" class="w-full bg-blue-600 py-5 rounded-2xl font-black uppercase tracking-widest">Send Request</button>
+            <button onclick="closeWithdraw()" class="w-full mt-4 text-[10px] text-gray-600 font-bold uppercase">Cancel</button>
+        </div>
     </div>
 
     <div id="admin-panel" class="hidden p-6 max-w-2xl mx-auto bg-gray-900 border border-yellow-500/20 mt-6 rounded-[2.5rem] mb-20">
-        <h2 class="text-yellow-500 font-black mb-6 uppercase italic">Admin Portal</h2>
-        
-        <div class="space-y-4 mb-10 pb-10 border-b border-gray-800">
-            <p class="text-xs font-bold text-gray-400">Add New Package</p>
-            <input type="text" id="adm-pname" placeholder="Package Name" class="w-full bg-black/40 p-4 rounded-xl border border-gray-800 text-sm outline-none">
-            <div class="grid grid-cols-2 gap-4">
-                <input type="number" id="adm-pcost" placeholder="Price (৳)" class="bg-black/40 p-4 rounded-xl border border-gray-800 text-sm outline-none">
-                <input type="number" id="adm-pdaily" placeholder="Daily Profit (৳)" class="bg-black/40 p-4 rounded-xl border border-gray-800 text-sm outline-none">
-            </div>
-            <button onclick="addNewPackage()" class="w-full bg-blue-600 font-black py-4 rounded-xl uppercase text-xs">Publish Package</button>
+        <h2 class="text-yellow-500 font-black mb-6 uppercase italic">Admin Console</h2>
+        <div class="mb-10">
+            <h3 class="text-xs font-bold text-gray-400 mb-4 uppercase">Pending Withdrawals</h3>
+            <div id="adm-withdraw-list" class="space-y-4">
+                </div>
         </div>
-
-        <div class="space-y-4">
-            <p class="text-xs font-bold text-gray-400">Add Money to User (Manual)</p>
-            <input type="text" id="adm-uid" placeholder="User UID" class="w-full bg-black/40 p-4 rounded-xl border border-gray-800 text-sm outline-none">
-            <input type="number" id="adm-amt" placeholder="Amount (৳)" class="w-full bg-black/40 p-4 rounded-xl border border-gray-800 text-sm outline-none">
-            <button onclick="addMoneyAdmin()" class="w-full bg-yellow-500 text-black font-black py-4 rounded-xl uppercase text-xs">Add Balance</button>
-        </div>
-    </div>
-
-    <div id="modal" class="fixed inset-0 bg-black/95 flex items-center justify-center p-6 hidden z-[100] backdrop-blur-md">
-        <div class="glass p-8 rounded-[2.5rem] w-full max-w-sm text-center">
-            <h2 class="text-2xl font-black mb-8 italic uppercase tracking-tighter text-blue-500">Investor Login</h2>
-            <input type="email" id="email" placeholder="Email" class="w-full bg-black/40 p-5 rounded-2xl border border-gray-800 mb-4 outline-none">
-            <input type="password" id="password" placeholder="Password" class="w-full bg-black/40 p-5 rounded-2xl border border-gray-800 mb-6 outline-none">
-            <button id="login-btn" class="w-full bg-blue-600 py-5 rounded-2xl font-black uppercase tracking-widest shadow-xl shadow-blue-900/40">Authorize</button>
+        <div class="pt-8 border-t border-gray-800">
+            <p class="text-[10px] text-gray-500 mb-4">Manual Balance Add (User UID)</p>
+            <input type="text" id="adm-uid" placeholder="UID" class="w-full bg-black/40 p-3 rounded-lg mb-2">
+            <input type="number" id="adm-amt" placeholder="Amount" class="w-full bg-black/40 p-3 rounded-lg mb-4">
+            <button onclick="addMoneyAdmin()" class="w-full bg-yellow-500 text-black py-3 rounded-lg font-bold">ADD BALANCE</button>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, getDocs, arrayUnion, query, where } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+        import { getAuth, onAuthStateChanged, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, updateDoc, setDoc, collection, getDocs, addDoc, query, where, orderBy } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCFpCE8khV-aedkVyGgrZY-yDXnHU9jhb4",
@@ -99,150 +98,116 @@
         const db = getFirestore(app);
         const ADMIN_EMAIL = "admin@bdfx.com";
 
-        window.toggleModal = () => document.getElementById('modal').classList.toggle('hidden');
         window.toggleAdmin = () => document.getElementById('admin-panel').classList.toggle('hidden');
+        window.openWithdraw = () => document.getElementById('withdraw-modal').classList.remove('hidden');
+        window.closeWithdraw = () => document.getElementById('withdraw-modal').classList.add('hidden');
 
-        // LOGIN
-        document.getElementById('login-btn').onclick = async () => {
-            const email = document.getElementById('email').value;
-            const pass = document.getElementById('password').value;
-            try { await signInWithEmailAndPassword(auth, email, pass); toggleModal(); } 
-            catch (e) { alert("Error: " + e.message); }
-        };
-
-        // LOAD SHOP PACKAGES
-        async function loadShop() {
-            const shopList = document.getElementById('shop-list');
-            shopList.innerHTML = "";
-            const querySnapshot = await getDocs(collection(db, "packages"));
-            querySnapshot.forEach((doc) => {
-                const p = doc.data();
-                shopList.innerHTML += `
-                    <div class="glass p-6 rounded-[2rem] pkg-card">
-                        <h4 class="font-black text-lg">${p.name}</h4>
-                        <p class="text-xs text-gray-400 mb-4">Earn ৳${p.daily}/day for 30 days</p>
-                        <div class="flex justify-between items-center border-t border-gray-800 pt-4">
-                            <span class="font-black text-blue-500">৳${p.price}</span>
-                            <button onclick="buyPackage('${doc.id}', ${p.price}, ${p.daily}, '${p.name}')" class="bg-blue-600 px-5 py-2 rounded-xl text-[10px] font-black uppercase">Buy</button>
-                        </div>
-                    </div>`;
-            });
-        }
-
-        // LOAD USER DASHBOARD
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 document.getElementById('dashboard').classList.remove('hidden');
                 document.getElementById('login-nav').classList.add('hidden');
-                if(user.email === ADMIN_EMAIL) document.getElementById('admin-btn').classList.remove('hidden');
-                
-                await loadShop();
-                await refreshUser();
-            } else {
-                document.getElementById('dashboard').classList.add('hidden');
-                document.getElementById('login-nav').classList.remove('hidden');
+                if(user.email === ADMIN_EMAIL) {
+                    document.getElementById('admin-btn').classList.remove('hidden');
+                    loadAdminWithdrawals();
+                }
+                refreshDashboard();
             }
         });
 
-        async function refreshUser() {
+        async function refreshDashboard() {
             const user = auth.currentUser;
             const snap = await getDoc(doc(db, "users", user.uid));
-            if (!snap.exists()) return;
-            
-            const data = snap.data();
-            document.getElementById('user-balance').innerText = (data.balance || 0).toLocaleString();
-            
-            const activeList = document.getElementById('active-list');
-            activeList.innerHTML = "";
-            const packages = data.activePackages || [];
-            
-            if(packages.length > 0) {
-                document.getElementById('active-pkg-area').classList.remove('hidden');
-                packages.forEach((p, index) => {
-                    const today = new Date().setHours(0,0,0,0);
-                    const lastClaim = p.lastClaimDate ? p.lastClaimDate.toDate().setHours(0,0,0,0) : 0;
-                    const canClaim = today > lastClaim;
-
-                    activeList.innerHTML += `
-                        <div class="glass p-5 rounded-2xl flex justify-between items-center border-l-4 border-blue-500">
+            if(snap.exists()) {
+                const data = snap.data();
+                document.getElementById('user-balance').innerText = (data.balance || 0).toLocaleString();
+                
+                // Load History
+                const q = query(collection(db, "withdrawals"), where("uid", "==", user.uid));
+                const hSnap = await getDocs(q);
+                const hList = document.getElementById('w-history-list');
+                hList.innerHTML = "";
+                hSnap.forEach(d => {
+                    const w = d.data();
+                    hList.innerHTML += `
+                        <div class="glass p-4 rounded-xl flex justify-between items-center">
                             <div>
-                                <p class="text-[10px] font-bold text-gray-500 uppercase">${p.name}</p>
-                                <p class="text-xs">Daily Profit: ৳${p.daily}</p>
+                                <p class="text-xs font-bold">৳${w.amount}</p>
+                                <p class="text-[9px] text-gray-500">${w.number}</p>
                             </div>
-                            <button onclick="claimProfit(${index})" ${!canClaim ? 'disabled' : ''} 
-                                class="px-4 py-2 rounded-lg text-[10px] font-black uppercase ${canClaim ? 'bg-green-600' : 'bg-gray-700 text-gray-400'}">
-                                ${canClaim ? 'Claim ৳' + p.daily : 'Claimed'}
-                            </button>
+                            <span class="text-[10px] font-black uppercase ${w.status === 'Pending' ? 'text-yellow-500' : 'text-green-500'}">${w.status}</span>
                         </div>`;
                 });
             }
         }
 
-        // BUY PACKAGE (Subtracts from balance)
-        window.buyPackage = async (id, price, daily, name) => {
+        window.submitWithdraw = async () => {
+            const amt = Number(document.getElementById('w-amount').value);
+            const num = document.getElementById('w-number').value;
+            const pin = document.getElementById('w-pass').value;
             const user = auth.currentUser;
             const userRef = doc(db, "users", user.uid);
-            const snap = await getDoc(userRef);
-            const currentBalance = snap.data().balance || 0;
+            const uSnap = await getDoc(userRef);
+            const uData = uSnap.data();
 
-            if (currentBalance < price) return alert("Insufficient Balance! Please Deposit first.");
-
-            if (confirm(`Purchase ${name} for ৳${price}?`)) {
-                await updateDoc(userRef, {
-                    balance: currentBalance - price,
-                    activePackages: arrayUnion({
-                        id: id,
-                        name: name,
-                        daily: daily,
-                        purchaseDate: new Date(),
-                        lastClaimDate: null
-                    })
-                });
-                alert("Purchase Successful!");
-                refreshUser();
+            if(amt > uData.balance) return alert("Insufficient Balance!");
+            
+            // Set PIN if not exists, else verify
+            if(!uData.withdrawPass) {
+                await updateDoc(userRef, { withdrawPass: pin });
+                alert("Withdrawal PIN Set!");
+            } else if(pin !== uData.withdrawPass) {
+                return alert("Wrong PIN!");
             }
-        };
 
-        // CLAIM PROFIT
-        window.claimProfit = async (index) => {
-            const user = auth.currentUser;
-            const userRef = doc(db, "users", user.uid);
-            const snap = await getDoc(userRef);
-            let data = snap.data();
-            let pkgs = [...data.activePackages];
-            
-            pkgs[index].lastClaimDate = new Date();
-            await updateDoc(userRef, {
-                balance: (data.balance || 0) + pkgs[index].daily,
-                activePackages: pkgs
+            // Create Request
+            await addDoc(collection(db, "withdrawals"), {
+                uid: user.uid,
+                email: user.email,
+                amount: amt,
+                number: num,
+                status: "Pending",
+                date: new Date()
             });
-            
-            alert(`৳${pkgs[index].daily} added to your balance!`);
-            refreshUser();
+
+            // Deduct Balance
+            await updateDoc(userRef, { balance: uData.balance - amt });
+            alert("Request Sent! Pending verification.");
+            closeWithdraw();
+            refreshDashboard();
         };
 
-        // ADMIN: ADD PACKAGE TO SHOP
-        window.addNewPackage = async () => {
-            const name = document.getElementById('adm-pname').value;
-            const price = Number(document.getElementById('adm-pcost').value);
-            const daily = Number(document.getElementById('adm-pdaily').value);
-            if(!name || !price) return;
-            await setDoc(doc(collection(db, "packages")), { name, price, daily });
-            alert("Package Published!");
-            loadShop();
+        // ADMIN: Load all pending withdrawals
+        async function loadAdminWithdrawals() {
+            const q = query(collection(db, "withdrawals"), where("status", "==", "Pending"));
+            const snap = await getDocs(q);
+            const admList = document.getElementById('adm-withdraw-list');
+            admList.innerHTML = "";
+            snap.forEach(d => {
+                const w = d.data();
+                admList.innerHTML += `
+                    <div class="bg-black/40 p-4 rounded-xl border border-gray-800">
+                        <p class="text-xs font-bold text-blue-400">${w.email}</p>
+                        <p class="text-lg font-black mt-1">৳${w.amount} → ${w.number}</p>
+                        <button onclick="approveWithdraw('${d.id}')" class="w-full bg-green-600 mt-3 py-2 rounded-lg text-[10px] font-black uppercase">Approve / Paid</button>
+                    </div>`;
+            });
+        }
+
+        window.approveWithdraw = async (id) => {
+            await updateDoc(doc(db, "withdrawals", id), { status: "Accepted" });
+            alert("Withdrawal Approved!");
+            loadAdminWithdrawals();
         };
 
-        // ADMIN: ADD MONEY TO USER
         window.addMoneyAdmin = async () => {
             const uid = document.getElementById('adm-uid').value;
             const amt = Number(document.getElementById('adm-amt').value);
-            const userRef = doc(db, "users", uid);
-            const snap = await getDoc(userRef);
-            await updateDoc(userRef, { balance: (snap.data().balance || 0) + amt });
-            alert("Money Added!");
+            const ref = doc(db, "users", uid);
+            const s = await getDoc(ref);
+            await updateDoc(ref, { balance: (s.data().balance || 0) + amt });
+            alert("Balance Added!");
         };
 
-        window.logout = () => signOut(auth);
     </script>
 </body>
 </html>
