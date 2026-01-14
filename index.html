@@ -3,176 +3,152 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BD-FX | Premium Financial Suite</title>
+    <title>BD-FX | Premium Car Mining</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #070b14; color: white; scroll-behavior: smooth; }
-        .glass { background: rgba(22, 27, 42, 0.7); backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.05); }
-        .premium-card { background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%); border: 1px solid rgba(59, 130, 246, 0.1); transition: 0.3s; }
-        .premium-card:hover { transform: translateY(-5px); border-color: #3b82f6; }
-        .status-badge { background: rgba(34, 197, 94, 0.1); color: #22c55e; border: 1px solid rgba(34, 197, 94, 0.2); }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #050810; color: white; scroll-behavior: smooth; }
+        .glass { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.05); }
+        .car-card { background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%); aspect-ratio: 1/1; position: relative; overflow: hidden; border: 1px solid rgba(59, 130, 246, 0.1); border-radius: 2rem; transition: 0.3s; }
+        .car-card:hover { transform: scale(1.02); border-color: #3b82f6; }
+        .badge-new { background: #ef4444; font-size: 8px; font-weight: 900; padding: 2px 8px; border-radius: 10px; position: absolute; top: 12px; left: 12px; z-index: 10; }
+        .badge-hot { background: #f59e0b; font-size: 8px; font-weight: 900; padding: 2px 8px; border-radius: 10px; position: absolute; top: 12px; right: 12px; z-index: 10; }
+        .car-img { width: 80%; margin: 10px auto; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.5)); }
+        .blur-bg { position: absolute; top: -50px; right: -50px; width: 150px; height: 150px; background: rgba(59, 130, 246, 0.1); filter: blur(60px); }
         input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-        .scroll-hide::-webkit-scrollbar { display: none; }
     </style>
 </head>
-<body class="pb-20">
+<body class="pb-24">
 
-    <nav class="p-5 border-b border-gray-800 flex justify-between items-center sticky top-0 z-[100] bg-[#070b14]/95 backdrop-blur-md">
+    <nav class="p-5 flex justify-between items-center sticky top-0 z-[100] bg-[#050810]/90 backdrop-blur-md border-b border-white/5">
         <div class="text-2xl font-black italic tracking-tighter text-blue-500">BD<span class="text-white">-FX</span></div>
         <div class="flex gap-2">
-            <button id="admin-btn" onclick="toggleSection('admin-panel')" class="hidden text-[10px] font-black text-yellow-500 border border-yellow-500/20 px-4 py-2 rounded-full uppercase">Admin</button>
-            <button id="login-nav" onclick="toggleModal('modal')" class="text-[10px] font-black text-blue-500 border border-blue-500/20 px-4 py-2 rounded-full uppercase">Login</button>
+            <button id="admin-btn" onclick="toggleSection('admin-panel')" class="hidden text-[9px] font-black text-yellow-500 border border-yellow-500/20 px-4 py-2 rounded-full">ADMIN</button>
+            <button id="login-nav" onclick="toggleModal('modal')" class="text-[9px] font-black text-blue-500 border border-blue-500/20 px-4 py-2 rounded-full uppercase">Login / Sign Up</button>
         </div>
     </nav>
 
     <div id="dashboard" class="hidden max-w-2xl mx-auto p-5">
         
-        <div class="glass p-6 rounded-[2rem] mb-8 flex items-center gap-4 border-white/5">
-            <div class="w-16 h-16 bg-gradient-to-tr from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center text-2xl font-black">
-                <i class="fa-solid fa-user-tie"></i>
-            </div>
-            <div class="flex-1">
-                <p id="profile-email" class="text-xs font-bold text-gray-400">user@email.com</p>
-                <div class="flex items-center gap-2">
-                    <span class="text-[8px] font-black uppercase tracking-widest text-gray-500">UID: <span id="profile-uid">...</span></span>
-                    <span class="status-badge px-2 py-0.5 rounded-full text-[8px] font-black uppercase">Verified</span>
-                </div>
-            </div>
-            <button onclick="signOutUser()" class="text-gray-500 hover:text-red-500"><i class="fa-solid fa-right-from-bracket"></i></button>
+        <div id="activation-card" class="hidden glass p-6 rounded-3xl mb-8 border-red-500/20 text-center">
+            <h3 class="text-xs font-black text-red-400 uppercase mb-2">Account Inactive</h3>
+            <p class="text-[10px] text-gray-500 mb-4 uppercase font-bold">Pay ৳100 Activation Fee to start earning</p>
+            <button onclick="activateAccount()" class="w-full bg-red-600 py-3 rounded-xl font-black text-[10px] uppercase">Activate Now (৳100)</button>
         </div>
 
-        <div class="bg-gradient-to-br from-blue-600 to-blue-900 p-8 rounded-[2.5rem] shadow-2xl mb-10 relative overflow-hidden border border-white/10">
+        <div class="bg-gradient-to-br from-blue-600 to-indigo-900 p-8 rounded-[2.5rem] shadow-2xl mb-10 relative overflow-hidden">
             <div class="relative z-10">
-                <div class="flex justify-between items-center mb-1">
-                    <p class="text-[10px] uppercase font-black text-blue-100 tracking-[0.2em]">Wallet Balance</p>
-                    <i class="fa-solid fa-shield-halved text-blue-300 opacity-50"></i>
-                </div>
+                <p class="text-[10px] uppercase font-black text-blue-100 mb-1 tracking-widest">Available Funds</p>
                 <h2 class="text-5xl font-black italic mb-10">৳<span id="user-balance">0.00</span></h2>
                 <div class="flex gap-3">
-                    <button onclick="toggleModal('deposit-modal')" class="flex-1 bg-white/10 hover:bg-white/20 py-4 rounded-2xl text-[10px] font-black uppercase transition">Deposit</button>
-                    <button onclick="toggleModal('withdraw-modal')" class="flex-1 bg-black/30 hover:bg-black/50 py-4 rounded-2xl text-[10px] font-black uppercase transition">Withdraw</button>
+                    <button onclick="toggleModal('deposit-modal')" class="flex-1 bg-white/10 py-4 rounded-2xl text-[10px] font-black uppercase">Deposit</button>
+                    <button onclick="toggleModal('withdraw-modal')" class="flex-1 bg-black/30 py-4 rounded-2xl text-[10px] font-black uppercase">Withdraw</button>
                 </div>
             </div>
-            <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-white/5 rounded-full blur-3xl"></div>
+            <div class="blur-bg"></div>
         </div>
 
-        <div id="active-pkg-section" class="hidden mb-12">
-            <h3 class="text-[10px] font-black text-gray-500 uppercase mb-4 tracking-widest ml-2">Active Income Streams</h3>
-            <div id="active-list" class="space-y-3"></div>
+        <h3 class="text-[10px] font-black text-gray-500 uppercase mb-4 tracking-widest ml-2">Premium Car Fleet</h3>
+        <div id="shop-list" class="grid grid-cols-2 gap-4 mb-12"></div>
+
+        <h3 class="text-[10px] font-black text-gray-500 uppercase mb-4 tracking-widest ml-2">Withdrawal History</h3>
+        <div id="user-w-history" class="glass rounded-3xl overflow-hidden divide-y divide-white/5 mb-12">
+            <p class="p-6 text-center text-gray-600 text-[10px] font-bold">NO RECORDS</p>
         </div>
 
-        <div class="mb-12">
-            <h3 class="text-[10px] font-black text-gray-500 uppercase mb-4 tracking-widest ml-2">Available Nodes</h3>
-            <div id="shop-list" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
-        </div>
-
-        <div class="mb-12">
-            <h3 class="text-[10px] font-black text-gray-500 uppercase mb-4 tracking-widest ml-2">Financial History</h3>
-            <div id="user-w-history" class="glass rounded-3xl overflow-hidden divide-y divide-white/5">
-                <p class="p-6 text-center text-gray-600 text-[10px] uppercase font-bold">No Records Found</p>
+        <div class="glass p-6 rounded-[2rem] flex items-center gap-4">
+            <div class="w-12 h-12 bg-blue-600/20 rounded-xl flex items-center justify-center text-blue-500"><i class="fa-solid fa-user"></i></div>
+            <div class="flex-1">
+                <p id="profile-username" class="text-[12px] font-black text-white uppercase tracking-tight">Loading...</p>
+                <p id="profile-status" class="text-[8px] font-black uppercase">Status: --</p>
             </div>
-        </div>
-
-        <div class="mt-20 pt-10 border-t border-gray-800/50">
-            <h3 class="text-center text-[10px] font-black text-blue-500 uppercase tracking-[0.3em] mb-8">Recommended Platforms</h3>
-            <div class="grid grid-cols-2 gap-4 mb-10">
-                <div class="glass p-4 rounded-2xl text-center opacity-40 grayscale hover:grayscale-0 hover:opacity-100 transition">
-                    <i class="fa-brands fa-bitcoin text-2xl mb-2"></i>
-                    <p class="text-[8px] font-black uppercase">Binance Smart</p>
-                </div>
-                <div class="glass p-4 rounded-2xl text-center opacity-40 grayscale hover:grayscale-0 hover:opacity-100 transition">
-                    <i class="fa-solid fa-building-columns text-2xl mb-2"></i>
-                    <p class="text-[8px] font-black uppercase">OctaFX Broker</p>
-                </div>
-                <div class="glass p-4 rounded-2xl text-center opacity-40 grayscale hover:grayscale-0 hover:opacity-100 transition">
-                    <i class="fa-solid fa-vault text-2xl mb-2"></i>
-                    <p class="text-[8px] font-black uppercase">Trust Wallet</p>
-                </div>
-                <div class="glass p-4 rounded-2xl text-center opacity-40 grayscale hover:grayscale-0 hover:opacity-100 transition">
-                    <i class="fa-solid fa-chart-line text-2xl mb-2"></i>
-                    <p class="text-[8px] font-black uppercase">MetaTrader 5</p>
-                </div>
-            </div>
+            <button onclick="signOutUser()" class="text-gray-600"><i class="fa-solid fa-right-from-bracket"></i></button>
         </div>
     </div>
 
-    <div id="admin-panel" class="hidden max-w-4xl mx-auto p-5 pb-24">
-        <h2 class="text-2xl font-black text-yellow-500 mb-8 uppercase italic border-b border-yellow-500/20 pb-4">Admin Dashboard</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="glass p-6 rounded-3xl border-yellow-500/20">
-                <h3 class="text-xs font-bold text-gray-400 mb-4 uppercase italic">User Database</h3>
-                <div id="adm-user-list" class="space-y-2 max-h-60 overflow-y-auto pr-2 scroll-hide"></div>
+    <div id="admin-panel" class="hidden max-w-4xl mx-auto p-5 pb-32">
+        <h2 class="text-xl font-black text-yellow-500 mb-6 uppercase italic">Admin Console</h2>
+        
+        <div class="glass p-6 rounded-3xl mb-6 border-yellow-500/20">
+            <h3 class="text-[10px] font-black text-yellow-500 uppercase mb-4">Direct Balance Access</h3>
+            <div class="flex gap-2">
+                <input id="adm-uid" placeholder="Enter Full User UID" class="flex-1 bg-black/40 p-3 rounded-lg text-[10px] outline-none border border-white/5">
+                <input id="adm-bal" type="number" placeholder="New Balance" class="w-24 bg-black/40 p-3 rounded-lg text-[10px] outline-none border border-white/5">
+                <button onclick="updateBal()" class="bg-yellow-500 text-black px-4 py-3 rounded-lg font-black text-[9px] uppercase">Update</button>
             </div>
-            <div class="glass p-6 rounded-3xl border-blue-500/20">
-                <h3 class="text-xs font-bold text-blue-400 mb-4 uppercase">New Deposits</h3>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-6">
+            <div class="glass p-5 rounded-3xl h-72 flex flex-col">
+                <h3 class="text-[10px] font-black text-gray-400 uppercase mb-3">User Management</h3>
+                <div id="adm-user-list" class="space-y-2 overflow-y-auto pr-2 flex-1"></div>
+            </div>
+            <div class="glass p-5 rounded-3xl">
+                <h3 class="text-[10px] font-black text-green-400 uppercase mb-3">Create New Car Node</h3>
+                <input id="p-name" placeholder="Car Model Name" class="w-full bg-black/40 p-3 rounded-lg mb-2 text-[10px]">
+                <div class="flex gap-2 mb-2">
+                    <input id="p-price" type="number" placeholder="Price" class="flex-1 bg-black/40 p-3 rounded-lg text-[10px]">
+                    <input id="p-daily" type="number" placeholder="Daily Profit" class="flex-1 bg-black/40 p-3 rounded-lg text-[10px]">
+                </div>
+                <div class="flex items-center gap-4 mb-4 ml-1">
+                    <label class="text-[9px] font-black text-yellow-500"><input type="checkbox" id="p-hot"> HOT BADGE</label>
+                </div>
+                <button onclick="addNewPkg()" class="w-full bg-green-600 py-3 rounded-xl font-black text-[9px] uppercase">Publish Node</button>
+            </div>
+            <div class="glass p-5 rounded-3xl border-blue-500/20">
+                <h3 class="text-[10px] font-black text-blue-400 uppercase mb-3">Deposit Approvals</h3>
                 <div id="adm-dep-list" class="space-y-2"></div>
             </div>
-            <div class="glass p-6 rounded-3xl border-red-500/20">
-                <h3 class="text-xs font-bold text-red-400 mb-4 uppercase">Pending Withdraw</h3>
+            <div class="glass p-5 rounded-3xl border-red-500/20">
+                <h3 class="text-[10px] font-black text-red-400 uppercase mb-3">Withdraw Payouts</h3>
                 <div id="adm-withdraw-list" class="space-y-2"></div>
             </div>
-            <div class="glass p-6 rounded-3xl border-green-500/20">
-                <h3 class="text-xs font-bold text-green-400 mb-4 uppercase">Create Node</h3>
-                <input type="text" id="p-name" placeholder="Package Name" class="w-full bg-black/40 p-3 rounded-lg mb-2 text-xs">
-                <div class="flex gap-2 mb-2">
-                    <input type="number" id="p-price" placeholder="Price" class="flex-1 bg-black/40 p-3 rounded-lg text-xs">
-                    <input type="number" id="p-daily" placeholder="Daily" class="flex-1 bg-black/40 p-3 rounded-lg text-xs">
-                </div>
-                <button onclick="addNewPackage()" class="w-full bg-green-600 py-3 rounded-xl font-black text-[10px] uppercase">Publish Package</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="deposit-modal" class="fixed inset-0 bg-black/98 flex items-center justify-center p-6 hidden z-[200] backdrop-blur-xl">
-        <div class="glass p-8 rounded-[3rem] w-full max-w-sm text-center">
-            <h2 class="text-xl font-black uppercase mb-6">Deposit Money</h2>
-            <div class="bg-white/5 p-5 rounded-2xl mb-6 border border-white/5">
-                <p class="text-[10px] text-gray-400 uppercase font-black mb-1 italic">Send Money (Personal)</p>
-                <p class="text-xl font-black text-blue-400 select-all">01405855309</p>
-                <p class="text-[9px] text-gray-500 mt-2 font-medium">bKash / Nagad / Upay</p>
-            </div>
-            <input type="number" id="dep-amt" placeholder="Amount (৳)" class="w-full bg-black/40 p-4 rounded-xl mb-3 outline-none border border-gray-800">
-            <input type="text" id="dep-trx" placeholder="Transaction ID (TXID)" class="w-full bg-black/40 p-4 rounded-xl mb-6 outline-none border border-gray-800 uppercase font-mono text-blue-400">
-            <button onclick="submitDeposit()" class="w-full bg-blue-600 py-4 rounded-2xl font-black uppercase">Submit Request</button>
-            <button onclick="toggleModal('deposit-modal')" class="mt-4 text-[10px] text-gray-500 font-bold uppercase">Back</button>
-        </div>
-    </div>
-
-    <div id="withdraw-modal" class="fixed inset-0 bg-black/98 flex items-center justify-center p-6 hidden z-[200] backdrop-blur-xl">
-        <div class="glass p-8 rounded-[3rem] w-full max-w-sm">
-            <h2 class="text-xl font-black uppercase mb-6 text-center">Withdraw Funds</h2>
-            <input type="number" id="w-amt" placeholder="Amount (৳)" class="w-full bg-black/40 p-4 rounded-xl mb-3 outline-none border border-gray-800">
-            <input type="text" id="w-num" placeholder="Receiver Number" class="w-full bg-black/40 p-4 rounded-xl mb-3 outline-none border border-gray-800">
-            <input type="password" id="w-pin" placeholder="6-Digit Security PIN" maxlength="6" class="w-full bg-black/40 p-4 rounded-xl mb-1 text-center tracking-[0.5em] outline-none border border-blue-500/30">
-            <button onclick="reqReset('PIN')" class="text-[8px] text-gray-600 uppercase font-bold block mb-6 text-center hover:text-blue-400">Reset PIN? (Charge: ৳10)</button>
-            <button onclick="submitWithdraw()" class="w-full bg-blue-600 py-4 rounded-2xl font-black uppercase">Confirm Withdraw</button>
-            <button onclick="toggleModal('withdraw-modal')" class="w-full mt-4 text-[10px] text-gray-500 font-bold uppercase text-center">Cancel</button>
         </div>
     </div>
 
     <div id="modal" class="fixed inset-0 bg-black/98 flex items-center justify-center p-6 hidden z-[300]">
         <div class="glass p-10 rounded-[3rem] w-full max-w-sm text-center">
-            <h2 class="text-3xl font-black mb-8 italic text-blue-500 uppercase tracking-tighter">Login</h2>
+            <h2 id="auth-title" class="text-3xl font-black mb-8 italic text-blue-500 uppercase tracking-tighter">Login</h2>
+            
+            <div id="reg-fields" class="hidden">
+                <input type="text" id="username" placeholder="Choose Username" class="w-full bg-black/40 p-5 rounded-2xl mb-4 outline-none border border-gray-800">
+            </div>
+
             <input type="email" id="email" placeholder="Email Address" class="w-full bg-black/40 p-5 rounded-2xl mb-4 outline-none border border-gray-800">
-            <input type="password" id="password" placeholder="Password" class="w-full bg-black/40 p-5 rounded-2xl mb-1 outline-none border border-gray-800">
-            <button onclick="reqReset('Password')" class="text-[8px] text-gray-600 uppercase font-bold block mb-8 hover:text-blue-400">Reset Password? (Charge: ৳10)</button>
-            <button id="login-btn" class="w-full bg-blue-600 py-5 rounded-2xl font-black uppercase tracking-widest">Enter System</button>
+            <input type="password" id="password" placeholder="Password" class="w-full bg-black/40 p-5 rounded-2xl mb-8 outline-none border border-gray-800">
+            
+            <button id="auth-btn" class="w-full bg-blue-600 py-5 rounded-2xl font-black uppercase mb-4 tracking-widest">Continue</button>
+            <p id="auth-switch" class="text-[10px] text-gray-500 font-bold cursor-pointer uppercase hover:text-white">Don't have an account? Sign Up</p>
         </div>
     </div>
 
-    <footer class="p-10 border-t border-gray-900 text-center max-w-2xl mx-auto">
-        <div class="flex justify-center gap-6 mb-10">
-            <a href="https://t.me/your_tg" class="w-12 h-12 glass rounded-full flex items-center justify-center text-blue-500 hover:bg-blue-600 hover:text-white transition"><i class="fa-brands fa-telegram text-xl"></i></a>
-            <a href="https://wa.me/8801405855309" class="w-12 h-12 glass rounded-full flex items-center justify-center text-green-500 hover:bg-green-600 hover:text-white transition"><i class="fa-brands fa-whatsapp text-xl"></i></a>
+    <div id="deposit-modal" class="fixed inset-0 bg-black/98 flex items-center justify-center p-6 hidden z-[200]">
+        <div class="glass p-8 rounded-[3rem] w-full max-w-sm text-center">
+            <h2 class="text-xl font-black uppercase mb-6 italic">Secure Deposit</h2>
+            <p class="text-[9px] text-gray-500 mb-1 uppercase font-bold">BKASH PERSONAL</p>
+            <p class="text-2xl font-black text-blue-400 mb-6 select-all">01405855309</p>
+            <input id="dep-amt" type="number" placeholder="Amount (৳)" class="w-full bg-black/40 p-4 rounded-xl mb-3 outline-none">
+            <input id="dep-trx" placeholder="TXID (Transaction ID)" class="w-full bg-black/40 p-4 rounded-xl mb-6 outline-none uppercase font-mono">
+            <button onclick="submitDep()" class="w-full bg-blue-600 py-4 rounded-2xl font-black uppercase">Submit Deposit</button>
+            <button onclick="toggleModal('deposit-modal')" class="mt-4 text-[9px] text-gray-500 font-bold uppercase">Back</button>
         </div>
-        <p class="text-[8px] text-gray-700 font-bold uppercase tracking-[0.6em]">BD-FX Global Network © 2026</p>
-    </footer>
+    </div>
+
+    <div id="withdraw-modal" class="fixed inset-0 bg-black/98 flex items-center justify-center p-6 hidden z-[200]">
+        <div class="glass p-8 rounded-[3rem] w-full max-w-sm">
+            <h2 class="text-xl font-black uppercase mb-6 text-center italic text-red-500">Withdraw Funds</h2>
+            <input id="w-amt" type="number" placeholder="Amount" class="w-full bg-black/40 p-4 rounded-xl mb-3 outline-none">
+            <input id="w-num" placeholder="Receiver Number" class="w-full bg-black/40 p-4 rounded-xl mb-3 outline-none">
+            <input id="w-pin" type="password" placeholder="6-Digit PIN" maxlength="6" class="w-full bg-black/40 p-4 rounded-xl mb-1 text-center tracking-[0.5em] outline-none">
+            <button onclick="submitWdr()" class="w-full bg-blue-600 py-4 rounded-2xl font-black uppercase mt-6">Confirm Payout</button>
+            <button onclick="toggleModal('withdraw-modal')" class="w-full mt-4 text-[9px] text-gray-500 font-bold uppercase text-center">Cancel</button>
+        </div>
+    </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
         import { getFirestore, doc, getDoc, updateDoc, setDoc, collection, getDocs, addDoc, query, where, orderBy, arrayUnion } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
         const firebaseConfig = {
@@ -190,191 +166,217 @@
         const db = getFirestore(app);
         const ADMIN_EMAIL = "admin@bdfx.com";
 
+        let isLogin = true;
+
         window.toggleModal = (id) => document.getElementById(id).classList.toggle('hidden');
         window.toggleSection = (id) => {
             document.getElementById('dashboard').classList.add('hidden');
             document.getElementById('admin-panel').classList.add('hidden');
             document.getElementById(id).classList.remove('hidden');
-        }
+        };
         window.signOutUser = () => signOut(auth).then(() => location.reload());
 
-        document.getElementById('login-btn').onclick = async () => {
+        document.getElementById('auth-switch').onclick = () => {
+            isLogin = !isLogin;
+            document.getElementById('auth-title').innerText = isLogin ? "Login" : "Create Account";
+            document.getElementById('reg-fields').classList.toggle('hidden', isLogin);
+            document.getElementById('auth-switch').innerText = isLogin ? "Don't have an account? Sign Up" : "Back to Login";
+        };
+
+        document.getElementById('auth-btn').onclick = async () => {
+            const email = document.getElementById('email').value;
+            const pass = document.getElementById('password').value;
+            const userNm = document.getElementById('username').value;
             try {
-                await signInWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('password').value);
+                if(isLogin) {
+                    await signInWithEmailAndPassword(auth, email, pass);
+                } else {
+                    if(!userNm) return alert("Username is required!");
+                    const res = await createUserWithEmailAndPassword(auth, email, pass);
+                    await setDoc(doc(db, "users", res.user.uid), { 
+                        username: userNm, 
+                        email: email, 
+                        balance: 20, 
+                        active: false, 
+                        activePackages: [], 
+                        withdrawPass: "" 
+                    });
+                    alert("Registration Successful! ৳20 Welcome Bonus added.");
+                }
                 toggleModal('modal');
-            } catch (e) { alert("Login failed. Check credentials."); }
+            } catch (e) { alert(e.message); }
         };
 
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 document.getElementById('dashboard').classList.remove('hidden');
                 document.getElementById('login-nav').classList.add('hidden');
-                document.getElementById('profile-email').innerText = user.email;
-                document.getElementById('profile-uid').innerText = user.uid.substring(0,8).toUpperCase();
                 if(user.email === ADMIN_EMAIL) {
                     document.getElementById('admin-btn').classList.remove('hidden');
-                    loadAdminStats();
+                    loadAdmin();
                 }
-                refreshAll();
+                refresh();
             }
         });
 
-        async function refreshAll() {
+        async function refresh() {
             const user = auth.currentUser;
-            const uRef = doc(db, "users", user.uid);
-            const uSnap = await getDoc(uRef);
-            if(uSnap.exists()){
-                const d = uSnap.data();
-                document.getElementById('user-balance').innerText = (d.balance || 0).toLocaleString();
-                
-                const activeList = document.getElementById('active-list');
-                activeList.innerHTML = "";
-                if(d.activePackages?.length > 0) {
-                    document.getElementById('active-pkg-section').classList.remove('hidden');
-                    d.activePackages.forEach((p, i) => {
-                        const canClaim = new Date().setHours(0,0,0,0) > (p.lastClaimDate?.toDate().setHours(0,0,0,0) || 0);
-                        activeList.innerHTML += `<div class="premium-card p-4 rounded-2xl flex justify-between items-center border-l-4 border-blue-500">
-                            <div><p class="text-[10px] font-black uppercase text-blue-400">${p.name}</p></div>
-                            <button onclick="claimProfit(${i})" ${!canClaim ? 'disabled' : ''} class="px-5 py-2 rounded-xl text-[9px] font-black ${canClaim ? 'bg-blue-600 shadow-lg shadow-blue-900/40' : 'bg-gray-800 text-gray-500'}">${canClaim ? 'Claim ৳'+p.daily : 'Ready Tomorrow'}</button>
-                        </div>`;
-                    });
-                }
+            const uSnap = await getDoc(doc(db, "users", user.uid));
+            if(!uSnap.exists()) return;
+            const d = uSnap.data();
 
-                // History (Time & Date included)
-                const hList = document.getElementById('user-w-history');
-                const wSnap = await getDocs(query(collection(db, "withdrawals"), where("uid", "==", user.uid), orderBy("date", "desc")));
-                if(!wSnap.empty) hList.innerHTML = "";
-                wSnap.forEach(d => {
-                    const w = d.data();
-                    const dt = w.date?.toDate().toLocaleString('en-GB', { day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit' }) || "N/A";
-                    hList.innerHTML += `<div class="p-4 flex justify-between items-center">
-                        <div class="flex flex-col"><span class="font-black text-xs text-gray-300">৳${w.amount} → ${w.number}</span><span class="text-[8px] text-gray-600 uppercase font-bold">${dt}</span></div>
-                        <span class="text-[9px] font-black uppercase ${w.status === 'Pending' ? 'text-yellow-600' : 'text-green-600'}">${w.status}</span>
-                    </div>`;
-                });
-            }
+            document.getElementById('user-balance').innerText = (d.balance || 0).toLocaleString();
+            document.getElementById('profile-username').innerText = d.username || "Anonymous";
+            document.getElementById('profile-status').innerText = d.active ? "STATUS: ACTIVE" : "STATUS: INACTIVE";
+            document.getElementById('profile-status').className = d.active ? "text-[8px] font-black uppercase text-green-500" : "text-[8px] font-black uppercase text-red-500";
+            
+            if(!d.active) document.getElementById('activation-card').classList.remove('hidden');
+            else document.getElementById('activation-card').classList.add('hidden');
 
-            // Market Nodes
+            const hList = document.getElementById('user-w-history');
+            const wSnap = await getDocs(query(collection(db, "withdrawals"), where("uid", "==", user.uid), orderBy("date", "desc")));
+            if(!wSnap.empty) hList.innerHTML = "";
+            wSnap.forEach(docSnap => {
+                const w = docSnap.data();
+                const dt = w.date?.toDate().toLocaleString('en-GB', {day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit'});
+                hList.innerHTML += `<div class="p-4 flex justify-between items-center text-[10px]">
+                    <div><p class="font-black text-white">৳${w.amount}</p><p class="text-[8px] text-gray-600">${dt}</p></div>
+                    <span class="font-black ${w.status==='Pending'?'text-yellow-600':'text-green-600'}">${w.status.toUpperCase()}</span>
+                </div>`;
+            });
+
             const sSnap = await getDocs(collection(db, "packages"));
-            const shopList = document.getElementById('shop-list');
-            shopList.innerHTML = "";
-            sSnap.forEach(d => {
-                const p = d.data();
-                shopList.innerHTML += `<div class="premium-card p-5 rounded-3xl flex justify-between items-center">
-                    <div><p class="font-black text-xl text-white">৳${p.price}</p><p class="text-[8px] font-black uppercase text-gray-500 tracking-widest">${p.name}</p></div>
-                    <button onclick="buyPkg('${d.id}', ${p.price}, ${p.daily}, '${p.name}')" class="bg-blue-600 px-6 py-2 rounded-xl text-[10px] font-black shadow-lg shadow-blue-900/20">JOIN</button>
+            const shop = document.getElementById('shop-list');
+            shop.innerHTML = "";
+            sSnap.forEach(docSnap => {
+                const p = docSnap.data();
+                const isNew = (new Date() - p.createdAt?.toDate()) < 86400000;
+                shop.innerHTML += `<div class="car-card p-6 flex flex-col justify-between">
+                    ${isNew ? '<span class="badge-new">NEW</span>' : ''}
+                    ${p.isHot ? '<span class="badge-hot">HOT</span>' : ''}
+                    <div class="text-center">
+                        <img src="https://pngimg.com/uploads/car/car_PNG754.png" class="car-img">
+                        <p class="text-[10px] font-black uppercase tracking-widest text-blue-400">${p.name}</p>
+                    </div>
+                    <div class="mt-4">
+                        <div class="flex justify-between text-[8px] font-black text-gray-500 mb-2">
+                            <span>PRICE: ৳${p.price}</span>
+                            <span>DAILY: ৳${p.daily}</span>
+                        </div>
+                        <button onclick="buyPkg('${docSnap.id}', ${p.price}, '${p.name}')" class="w-full bg-blue-600 py-2 rounded-xl text-[9px] font-black uppercase">Unlock</button>
+                    </div>
                 </div>`;
             });
         }
 
-        window.claimProfit = async (i) => {
-            const uRef = doc(db, "users", auth.currentUser.uid);
-            const snap = await getDoc(uRef);
-            let pkgs = [...snap.data().activePackages];
-            pkgs[i].lastClaimDate = new Date();
-            await updateDoc(uRef, { balance: (snap.data().balance || 0) + pkgs[i].daily, activePackages: pkgs });
-            refreshAll();
-        };
-
-        window.buyPkg = async (id, price, daily, name) => {
+        window.activateAccount = async () => {
             const uRef = doc(db, "users", auth.currentUser.uid);
             const uSnap = await getDoc(uRef);
-            if(uSnap.data().balance < price) return alert("Low Wallet Balance!");
-            await updateDoc(uRef, { balance: uSnap.data().balance - price, activePackages: arrayUnion({ name, daily, lastClaimDate: null }) });
-            alert("Node Activated: " + name); refreshAll();
+            if(uSnap.data().balance < 100) return alert("Insufficient Balance! Need ৳100.");
+            await updateDoc(uRef, { balance: uSnap.data().balance - 100, active: true });
+            alert("Account Activated Successfully!"); refresh();
         };
 
-        window.submitDeposit = async () => {
+        window.submitDep = async () => {
             const amt = Number(document.getElementById('dep-amt').value);
             const trx = document.getElementById('dep-trx').value;
+            const userSnap = await getDoc(doc(db, "users", auth.currentUser.uid));
             if(!amt || !trx) return alert("Fill all fields");
-            await addDoc(collection(db, "deposits"), { uid: auth.currentUser.uid, email: auth.currentUser.email, amount: amt, trx: trx, status: "Pending", date: new Date() });
-            alert("Deposit Request Recorded!"); toggleModal('deposit-modal');
+            await addDoc(collection(db, "deposits"), { 
+                uid: auth.currentUser.uid, 
+                username: userSnap.data().username, 
+                amount: amt, 
+                trx, 
+                status: "Pending", 
+                date: new Date() 
+            });
+            alert("Deposit request submitted!"); toggleModal('deposit-modal');
         };
 
-        window.submitWithdraw = async () => {
+        window.submitWdr = async () => {
             const amt = Number(document.getElementById('w-amt').value);
             const num = document.getElementById('w-num').value;
-            const pin = document.getElementById('w-pin').value;
-            const uRef = doc(db, "users", auth.currentUser.uid);
-            const uSnap = await getDoc(uRef);
-            const d = uSnap.data();
-
-            if(amt > (d.balance || 0)) return alert("Low Balance!");
-            if(!d.withdrawPass) {
-                await updateDoc(uRef, { withdrawPass: pin }); alert("Withdraw PIN Created!");
-            } else if(pin !== d.withdrawPass) return alert("Incorrect PIN!");
-
-            await addDoc(collection(db, "withdrawals"), { uid: auth.currentUser.uid, amount: amt, number: num, status: "Pending", email: auth.currentUser.email, date: new Date() });
-            await updateDoc(uRef, { balance: d.balance - amt });
-            alert("Withdrawal Pending Confirmation!"); toggleModal('withdraw-modal'); refreshAll();
+            const userRef = doc(db, "users", auth.currentUser.uid);
+            const userSnap = await getDoc(userRef);
+            if(amt > userSnap.data().balance) return alert("Low balance!");
+            await addDoc(collection(db, "withdrawals"), { 
+                uid: auth.currentUser.uid, 
+                username: userSnap.data().username, 
+                amount: amt, 
+                number: num, 
+                status: "Pending", 
+                date: new Date() 
+            });
+            await updateDoc(userRef, { balance: userSnap.data().balance - amt });
+            alert("Withdrawal requested!"); toggleModal('withdraw-modal'); refresh();
         };
 
-        window.reqReset = async (type) => {
-            const uRef = doc(db, "users", auth.currentUser.uid);
-            const s = await getDoc(uRef);
-            if(s.data().balance < 10) return alert("Account needs ৳10 for reset fee");
-            await updateDoc(uRef, { balance: s.data().balance - 10 });
-            await addDoc(collection(db, "resets"), { uid: auth.currentUser.uid, email: auth.currentUser.email, type: type, date: new Date() });
-            alert(type + " Reset Protocol Initiated (৳10 Fee Charged)");
-        };
-
-        // ADMIN FUNCTIONS
-        async function loadAdminStats() {
+        async function loadAdmin() {
             const users = await getDocs(collection(db, "users"));
             const uList = document.getElementById('adm-user-list');
             uList.innerHTML = "";
             users.forEach(d => {
+                const ud = d.data();
                 uList.innerHTML += `<div class="bg-black/40 p-3 rounded-xl text-[9px] flex justify-between border border-white/5">
-                    <span class="text-gray-400">${d.data().email}</span><span class="text-yellow-500 font-black tracking-widest">৳${d.data().balance || 0}</span>
+                    <div class="flex flex-col">
+                        <span class="text-white font-black uppercase">${ud.username || 'User'}</span>
+                        <span class="text-gray-600 text-[7px] select-all">${d.id}</span>
+                    </div>
+                    <span class="text-yellow-500 font-black">৳${ud.balance}</span>
                 </div>`;
             });
 
             const deps = await getDocs(query(collection(db, "deposits"), where("status", "==", "Pending")));
-            const dList = document.getElementById('adm-dep-list');
-            dList.innerHTML = "";
+            const dList = document.getElementById('adm-dep-list'); dList.innerHTML = "";
             deps.forEach(d => {
                 const dp = d.data();
-                dList.innerHTML += `<div class="bg-blue-900/20 p-4 rounded-2xl text-[10px] border border-blue-500/20">
-                    <p class="font-bold">${dp.email} <br> <span class="text-blue-400 text-lg">৳${dp.amount}</span></p>
-                    <p class="font-mono text-gray-500 bg-black/40 p-2 rounded mt-2 select-all uppercase">${dp.trx}</p>
-                    <button onclick="approveDep('${d.id}', '${dp.uid}', ${dp.amount})" class="w-full bg-blue-600 py-2 rounded-xl mt-3 font-black uppercase text-[9px]">Confirm & Add Balance</button>
+                dList.innerHTML += `<div class="bg-blue-900/10 p-3 rounded-xl text-[8px] flex justify-between items-center border border-blue-500/10">
+                    <span><b>${dp.username}</b>: ৳${dp.amount}<br><span class="text-gray-500 font-mono">${dp.trx}</span></span>
+                    <button onclick="approveDep('${d.id}','${dp.uid}',${dp.amount})" class="bg-blue-600 px-3 py-1 rounded-lg font-black uppercase">OK</button>
                 </div>`;
             });
 
-            const wdr = await getDocs(query(collection(db, "withdrawals"), where("status", "==", "Pending")));
-            const wList = document.getElementById('adm-withdraw-list');
-            wList.innerHTML = "";
-            wdr.forEach(d => {
+            const wdrs = await getDocs(query(collection(db, "withdrawals"), where("status", "==", "Pending")));
+            const wList = document.getElementById('adm-withdraw-list'); wList.innerHTML = "";
+            wdrs.forEach(d => {
                 const wd = d.data();
-                wList.innerHTML += `<div class="bg-red-900/20 p-4 rounded-2xl text-[10px] border border-red-500/20">
-                    <p class="font-bold">${wd.email} <br> <span class="text-red-400 text-lg">৳${wd.amount}</span></p>
-                    <p class="text-gray-500 mt-1 uppercase font-black">To: ${wd.number}</p>
-                    <button onclick="approveWdr('${d.id}')" class="w-full bg-red-600 py-2 rounded-xl mt-3 font-black uppercase text-[9px]">Approve & Mark Paid</button>
+                wList.innerHTML += `<div class="bg-red-900/10 p-3 rounded-xl text-[8px] flex justify-between items-center border border-red-500/10">
+                    <span><b>${wd.username}</b>: ৳${wd.amount}<br><span class="text-gray-500">${wd.number}</span></span>
+                    <button onclick="approveWdr('${d.id}')" class="bg-red-600 px-3 py-1 rounded-lg font-black uppercase">Paid</button>
                 </div>`;
             });
         }
 
+        window.updateBal = async () => {
+            const uid = document.getElementById('adm-uid').value;
+            const bal = Number(document.getElementById('adm-bal').value);
+            if(!uid) return alert("UID is required");
+            await updateDoc(doc(db, "users", uid), { balance: bal });
+            alert("Balance updated for user!"); loadAdmin();
+        };
+
+        window.addNewPkg = async () => {
+            await addDoc(collection(db, "packages"), {
+                name: document.getElementById('p-name').value,
+                price: Number(document.getElementById('p-price').value),
+                daily: Number(document.getElementById('p-daily').value),
+                isHot: document.getElementById('p-hot').checked,
+                createdAt: new Date()
+            });
+            alert("Package Published!"); refresh();
+        };
+
         window.approveDep = async (id, uid, amt) => {
             const uRef = doc(db, "users", uid);
             const s = await getDoc(uRef);
-            await updateDoc(uRef, { balance: (s.data().balance || 0) + amt });
+            await updateDoc(uRef, { balance: (s.data().balance||0) + amt });
             await updateDoc(doc(db, "deposits", id), { status: "Accepted" });
-            alert("Deposit Verified!"); loadAdminStats(); refreshAll();
+            alert("Deposit Approved"); loadAdmin();
         };
 
         window.approveWdr = async (id) => {
             await updateDoc(doc(db, "withdrawals", id), { status: "Accepted" });
-            alert("Payment Marked as Sent!"); loadAdminStats(); refreshAll();
-        };
-
-        window.addNewPackage = async () => {
-            await addDoc(collection(db, "packages"), { 
-                name: document.getElementById('p-name').value, 
-                price: Number(document.getElementById('p-price').value), 
-                daily: Number(document.getElementById('p-daily').value) 
-            });
-            alert("New Market Node Published!"); refreshAll();
+            alert("Withdrawal Marked as Paid"); loadAdmin();
         };
     </script>
 </body>
