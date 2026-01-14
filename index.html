@@ -1,120 +1,105 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BD-FX | Global Digital Solutions</title>
+    <title>BD-FX | Client Portal</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; transition: 0.3s; }
-        .hero-gradient { background: radial-gradient(circle at 50% 50%, #1e3a8a 0%, #0a0f1a 100%); }
-    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700&display=swap" rel="stylesheet">
+    <style>body { font-family: 'Plus Jakarta Sans', sans-serif; }</style>
 </head>
-<body class="bg-[#0a0f1a] text-white overflow-x-hidden">
+<body class="bg-[#0a0f1a] text-white">
 
-    <nav class="flex justify-between items-center py-6 px-6 md:px-12 border-b border-gray-800 sticky top-0 bg-[#0a0f1a]/90 backdrop-blur-lg z-50">
-        <div class="text-2xl font-black italic uppercase">BD<span class="text-blue-500">-FX</span></div>
-        <div class="flex gap-4">
-            <button onclick="showLogin()" id="login-btn" class="text-[10px] font-bold uppercase tracking-widest text-blue-500">Client Login</button>
-            <a href="#contact" class="bg-blue-600 px-6 py-2 rounded-full font-bold text-xs">HIRE US</a>
-        </div>
+    <nav class="p-6 border-b border-gray-800 flex justify-between items-center bg-[#0a0f1a]/80 backdrop-blur-md sticky top-0 z-50">
+        <div class="text-xl font-black italic">BD<span class="text-blue-500">-FX</span></div>
+        <button id="login-nav" onclick="toggleModal()" class="text-[10px] font-bold text-blue-500 uppercase tracking-widest border border-blue-500/20 px-4 py-2 rounded-full">Client Login</button>
     </nav>
 
-    <div id="home-page">
-        <header class="relative hero-gradient pt-28 pb-36 px-6 text-center">
-            <h1 class="text-6xl md:text-8xl font-extrabold mb-6 tracking-tighter">BD-FX <span class="text-blue-500">Studio.</span></h1>
-            <p class="text-gray-400 max-w-xl mx-auto mb-10 text-lg">Engineering elite digital products and user accounts.</p>
-            <a href="#portfolio" class="bg-blue-600 px-10 py-4 rounded-2xl font-bold">Browse Projects</a>
-        </header>
+    <div id="dashboard" class="hidden p-8 max-w-2xl mx-auto pt-20">
+        <h1 class="text-3xl font-bold mb-8">Welcome Back, <span id="user-name" class="text-blue-500">User</span></h1>
+        
+        <div class="bg-gradient-to-br from-blue-600 to-indigo-700 p-10 rounded-[2.5rem] shadow-2xl mb-6">
+            <p class="text-[10px] uppercase font-black tracking-[0.2em] text-blue-100 mb-2">Available Balance</p>
+            <h2 class="text-5xl font-black">$<span id="balance">0.00</span></h2>
+        </div>
 
-        <section id="portfolio" class="py-24 px-6">
-            <div class="max-w-7xl mx-auto">
-                <h2 class="text-4xl font-extrabold mb-12 italic text-center uppercase">Our Works</h2>
-                <div id="project-container" class="grid md:grid-cols-3 gap-8"></div>
-            </div>
-        </section>
+        <div class="bg-gray-900 border border-gray-800 p-8 rounded-[2.5rem]">
+            <h4 class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-4">Project Status</h4>
+            <p class="text-sm text-gray-400">Your current digital assets are being synchronized. Contact admin for manual updates.</p>
+        </div>
+
+        <button onclick="logout()" class="w-full mt-10 text-red-500 text-[10px] font-black uppercase tracking-[0.3em]">Sign Out From Portal</button>
     </div>
 
-    <div id="login-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-[100] hidden flex items-center justify-center p-6">
-        <div class="bg-gray-900 p-8 rounded-[2.5rem] border border-gray-800 w-full max-w-md">
-            <h2 class="text-2xl font-black mb-6 italic uppercase text-center">User <span class="text-blue-500">Login</span></h2>
-            <input type="text" id="username" placeholder="Username" class="w-full bg-[#161b2a] p-4 rounded-xl border border-gray-800 mb-4 outline-none">
-            <input type="password" id="password" placeholder="Password" class="w-full bg-[#161b2a] p-4 rounded-xl border border-gray-800 mb-6 outline-none">
-            <button onclick="handleLogin()" class="w-full bg-blue-600 py-4 rounded-xl font-bold uppercase tracking-widest">Login to Dashboard</button>
-            <button onclick="closeLogin()" class="w-full mt-4 text-xs text-gray-500 uppercase">Close</button>
+    <div id="modal" class="fixed inset-0 bg-black/95 flex items-center justify-center p-6 hidden z-[100]">
+        <div class="bg-gray-900 p-8 rounded-[2.5rem] border border-gray-800 w-full max-w-sm">
+            <h2 class="text-2xl font-black mb-6 italic text-center">CLIENT <span class="text-blue-500">ACCESS</span></h2>
+            <input type="email" id="email" placeholder="Registered Email" class="w-full bg-[#161b2a] p-4 rounded-2xl mb-4 border border-gray-800 outline-none focus:border-blue-500 transition">
+            <input type="password" id="password" placeholder="Secure Password" class="w-full bg-[#161b2a] p-4 rounded-2xl mb-6 border border-gray-800 outline-none focus:border-blue-500 transition">
+            <button id="login-btn" class="w-full bg-blue-600 py-5 rounded-2xl font-black uppercase tracking-widest shadow-xl shadow-blue-900/30">Authorize Login</button>
+            <button onclick="toggleModal()" class="w-full mt-6 text-[10px] text-gray-600 font-bold uppercase tracking-widest">Return to Home</button>
         </div>
     </div>
 
-    <div id="dashboard-page" class="hidden py-24 px-6 min-h-screen">
-        <div class="max-w-4xl mx-auto">
-            <div class="flex justify-between items-center mb-10">
-                <h2 class="text-3xl font-black italic">Welcome, <span id="display-name" class="text-blue-500">User</span></h2>
-                <button onclick="logout()" class="text-xs font-bold text-red-500 uppercase border border-red-500/20 px-4 py-2 rounded-full">Logout</button>
-            </div>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
-            <div class="grid md:grid-cols-2 gap-6 mb-12">
-                <div class="bg-gradient-to-br from-blue-600 to-indigo-700 p-8 rounded-[2.5rem] shadow-xl">
-                    <p class="text-[10px] uppercase font-black tracking-widest text-blue-100 mb-2">Current Balance</p>
-                    <h3 class="text-4xl font-extrabold">$<span id="balance">0.00</span></h3>
-                </div>
-                <div class="bg-gray-900 border border-gray-800 p-8 rounded-[2.5rem]">
-                    <p class="text-[10px] uppercase font-black tracking-widest text-gray-500 mb-2">Projects Active</p>
-                    <h3 class="text-4xl font-extrabold">0</h3>
-                </div>
-            </div>
+        // 🔥 Apnar Sothik Config eikhane bosiyechi
+        const firebaseConfig = {
+            apiKey: "AIzaSyCFpCE8khV-aedkVyGgrZY-yDXnHU9jhb4",
+            authDomain: "bd-fx-app.firebaseapp.com",
+            projectId: "bd-fx-app",
+            storageBucket: "bd-fx-app.firebasestorage.app",
+            messagingSenderId: "943565298325",
+            appId: "1:943565298325:web:329b06cd41be53c3e2999c",
+            measurementId: "G-LG3XB5J7B7"
+        };
 
-            <div class="bg-gray-900/50 border border-gray-800 rounded-[2.5rem] p-8">
-                <h4 class="font-bold mb-4 uppercase text-xs tracking-widest text-blue-500">Task Progress</h4>
-                <p class="text-gray-400 text-sm">No active projects found. Contact BD-FX to start a new task.</p>
-            </div>
-        </div>
-    </div>
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
 
-    <script>
-        // 1. PROJECT DATA
-        const myProjects = [
-            { title: "Trading Engine", category: "Fintech", img: "https://via.placeholder.com/600x400" },
-            { title: "Eco Portal", category: "Retail", img: "https://via.placeholder.com/600x400" }
-        ];
+        window.toggleModal = () => document.getElementById('modal').classList.toggle('hidden');
 
-        const container = document.getElementById('project-container');
-        myProjects.forEach(p => {
-            container.innerHTML += `
-                <div class="rounded-3xl bg-gray-900 border border-gray-800 overflow-hidden">
-                    <img src="${p.img}" class="h-48 w-full object-cover">
-                    <div class="p-6">
-                        <span class="text-blue-500 font-bold text-[9px] uppercase tracking-widest">${p.category}</span>
-                        <h4 class="font-bold text-xl mt-1">${p.title}</h4>
-                    </div>
-                </div>
-            `;
+        document.getElementById('login-btn').onclick = async () => {
+            const email = document.getElementById('email').value;
+            const pass = document.getElementById('password').value;
+            const btn = document.getElementById('login-btn');
+            
+            btn.innerText = "Checking...";
+            try {
+                await signInWithEmailAndPassword(auth, email, pass);
+                toggleModal();
+            } catch (e) { 
+                alert("Login Error: Please check your credentials."); 
+                btn.innerText = "Authorize Login";
+            }
+        };
+
+        onAuthStateChanged(auth, async (user) => {
+            const dash = document.getElementById('dashboard');
+            const navBtn = document.getElementById('login-nav');
+            if (user) {
+                dash.classList.remove('hidden');
+                navBtn.classList.add('hidden');
+                document.getElementById('user-name').innerText = user.email.split('@')[0].toUpperCase();
+                
+                // Firestore theke balance anbe (jodi database-e user thake)
+                const docSnap = await getDoc(doc(db, "users", user.uid));
+                if (docSnap.exists()) {
+                    document.getElementById('balance').innerText = docSnap.data().balance.toFixed(2);
+                } else {
+                    document.getElementById('balance').innerText = "0.00";
+                }
+            } else {
+                dash.classList.add('hidden');
+                navBtn.classList.remove('hidden');
+            }
         });
 
-        // 2. DASHBOARD LOGIC (SIMULATED)
-        function showLogin() { document.getElementById('login-modal').classList.remove('hidden'); }
-        function closeLogin() { document.getElementById('login-modal').classList.add('hidden'); }
-
-        function handleLogin() {
-            const user = document.getElementById('username').value;
-            if(user) {
-                document.getElementById('display-name').innerText = user;
-                document.getElementById('home-page').classList.add('hidden');
-                document.getElementById('login-modal').classList.add('hidden');
-                document.getElementById('dashboard-page').classList.remove('hidden');
-                document.getElementById('login-btn').classList.add('hidden');
-                
-                // Demo Balance
-                document.getElementById('balance').innerText = "150.00";
-            } else {
-                alert("Please enter a username");
-            }
-        }
-
-        function logout() {
-            location.reload();
-        }
+        window.logout = () => signOut(auth);
     </script>
 </body>
 </html>
