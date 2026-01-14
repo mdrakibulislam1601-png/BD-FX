@@ -3,50 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BD-FX | Client Portal</title>
+    <title>BD-FX | Premium Portal</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;800&display=swap" rel="stylesheet">
     <style>body { font-family: 'Plus Jakarta Sans', sans-serif; }</style>
 </head>
 <body class="bg-[#0a0f1a] text-white">
 
-    <nav class="p-6 border-b border-gray-800 flex justify-between items-center bg-[#0a0f1a]/80 backdrop-blur-md sticky top-0 z-50">
+    <nav class="p-6 border-b border-gray-800 flex justify-between items-center bg-[#0a0f1a]/90 backdrop-blur-md sticky top-0 z-50">
         <div class="text-xl font-black italic">BD<span class="text-blue-500">-FX</span></div>
-        <button id="login-nav" onclick="toggleModal()" class="text-[10px] font-bold text-blue-500 uppercase tracking-widest border border-blue-500/20 px-4 py-2 rounded-full">Client Login</button>
+        <div class="flex gap-4">
+            <button id="admin-btn" onclick="toggleAdmin()" class="hidden text-[10px] font-bold text-yellow-500 border border-yellow-500/20 px-4 py-2 rounded-full">ADMIN PANEL</button>
+            <button id="login-nav" onclick="toggleModal()" class="text-[10px] font-bold text-blue-500 uppercase border border-blue-500/20 px-4 py-2 rounded-full">Login</button>
+        </div>
     </nav>
 
-    <div id="dashboard" class="hidden p-8 max-w-2xl mx-auto pt-20">
-        <h1 class="text-3xl font-bold mb-8">Welcome Back, <span id="user-name" class="text-blue-500">User</span></h1>
-        
-        <div class="bg-gradient-to-br from-blue-600 to-indigo-700 p-10 rounded-[2.5rem] shadow-2xl mb-6">
-            <p class="text-[10px] uppercase font-black tracking-[0.2em] text-blue-100 mb-2">Available Balance</p>
+    <div id="dashboard" class="hidden p-8 max-w-2xl mx-auto pt-10">
+        <h1 class="text-3xl font-bold mb-6 italic">Member <span class="text-blue-500">Area</span></h1>
+        <div class="bg-gradient-to-br from-blue-600 to-indigo-800 p-10 rounded-[2.5rem] shadow-2xl mb-6">
+            <p class="text-[10px] uppercase font-black tracking-widest text-blue-100 mb-2">Your Balance</p>
             <h2 class="text-5xl font-black">$<span id="balance">0.00</span></h2>
         </div>
+        <button onclick="logout()" class="w-full text-red-500 text-[10px] font-black uppercase tracking-widest">Sign Out</button>
+    </div>
 
-        <div class="bg-gray-900 border border-gray-800 p-8 rounded-[2.5rem]">
-            <h4 class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-4">Project Status</h4>
-            <p class="text-sm text-gray-400">Your current digital assets are being synchronized. Contact admin for manual updates.</p>
-        </div>
-
-        <button onclick="logout()" class="w-full mt-10 text-red-500 text-[10px] font-black uppercase tracking-[0.3em]">Sign Out From Portal</button>
+    <div id="admin-panel" class="hidden p-8 max-w-2xl mx-auto bg-gray-900 mt-6 rounded-[2.5rem] border border-yellow-500/20">
+        <h2 class="text-xl font-bold mb-6 text-yellow-500">Update User Balance</h2>
+        <input type="text" id="target-uid" placeholder="User UID (Authentication theke)" class="w-full bg-[#161b2a] p-4 rounded-xl mb-4 border border-gray-800 outline-none">
+        <input type="number" id="new-balance" placeholder="Enter New Amount" class="w-full bg-[#161b2a] p-4 rounded-xl mb-6 border border-gray-800 outline-none">
+        <button onclick="updateBalance()" class="w-full bg-yellow-500 text-black py-4 rounded-xl font-bold uppercase">Update Now</button>
     </div>
 
     <div id="modal" class="fixed inset-0 bg-black/95 flex items-center justify-center p-6 hidden z-[100]">
         <div class="bg-gray-900 p-8 rounded-[2.5rem] border border-gray-800 w-full max-w-sm">
-            <h2 class="text-2xl font-black mb-6 italic text-center">CLIENT <span class="text-blue-500">ACCESS</span></h2>
-            <input type="email" id="email" placeholder="Registered Email" class="w-full bg-[#161b2a] p-4 rounded-2xl mb-4 border border-gray-800 outline-none focus:border-blue-500 transition">
-            <input type="password" id="password" placeholder="Secure Password" class="w-full bg-[#161b2a] p-4 rounded-2xl mb-6 border border-gray-800 outline-none focus:border-blue-500 transition">
-            <button id="login-btn" class="w-full bg-blue-600 py-5 rounded-2xl font-black uppercase tracking-widest shadow-xl shadow-blue-900/30">Authorize Login</button>
-            <button onclick="toggleModal()" class="w-full mt-6 text-[10px] text-gray-600 font-bold uppercase tracking-widest">Return to Home</button>
+            <h2 class="text-2xl font-black mb-6 text-center italic">CLIENT <span class="text-blue-500">PORTAL</span></h2>
+            <input type="email" id="email" placeholder="Email" class="w-full bg-[#161b2a] p-4 rounded-xl mb-4 border border-gray-800 outline-none">
+            <input type="password" id="password" placeholder="Password" class="w-full bg-[#161b2a] p-4 rounded-xl mb-6 border border-gray-800 outline-none">
+            <button id="login-btn" class="w-full bg-blue-600 py-4 rounded-xl font-black uppercase">Login</button>
+            <button onclick="toggleModal()" class="w-full mt-4 text-[10px] text-gray-500 uppercase">Close</button>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
-        // 🔥 Apnar Sothik Config eikhane bosiyechi
         const firebaseConfig = {
             apiKey: "AIzaSyCFpCE8khV-aedkVyGgrZY-yDXnHU9jhb4",
             authDomain: "bd-fx-app.firebaseapp.com",
@@ -61,43 +63,58 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        window.toggleModal = () => document.getElementById('modal').classList.toggle('hidden');
+        // Admin Email (Ei email login korle admin panel ashbe)
+        const ADMIN_EMAIL = "admin@bdfx.com"; 
 
+        window.toggleModal = () => document.getElementById('modal').classList.toggle('hidden');
+        window.toggleAdmin = () => document.getElementById('admin-panel').classList.toggle('hidden');
+
+        // LOGIN
         document.getElementById('login-btn').onclick = async () => {
             const email = document.getElementById('email').value;
             const pass = document.getElementById('password').value;
-            const btn = document.getElementById('login-btn');
-            
-            btn.innerText = "Checking...";
             try {
                 await signInWithEmailAndPassword(auth, email, pass);
                 toggleModal();
-            } catch (e) { 
-                alert("Login Error: Please check your credentials."); 
-                btn.innerText = "Authorize Login";
-            }
+            } catch (e) { alert("Login Error: " + e.message); }
         };
 
+        // AUTH STATE
         onAuthStateChanged(auth, async (user) => {
-            const dash = document.getElementById('dashboard');
-            const navBtn = document.getElementById('login-nav');
             if (user) {
-                dash.classList.remove('hidden');
-                navBtn.classList.add('hidden');
-                document.getElementById('user-name').innerText = user.email.split('@')[0].toUpperCase();
+                document.getElementById('dashboard').classList.remove('hidden');
+                document.getElementById('login-nav').classList.add('hidden');
                 
-                // Firestore theke balance anbe (jodi database-e user thake)
-                const docSnap = await getDoc(doc(db, "users", user.uid));
+                // Admin check
+                if(user.email === ADMIN_EMAIL) {
+                    document.getElementById('admin-btn').classList.remove('hidden');
+                }
+
+                const docRef = doc(db, "users", user.uid);
+                const docSnap = await getDoc(docRef);
                 if (docSnap.exists()) {
-                    document.getElementById('balance').innerText = docSnap.data().balance.toFixed(2);
-                } else {
-                    document.getElementById('balance').innerText = "0.00";
+                    document.getElementById('balance').innerText = docSnap.data().balance;
                 }
             } else {
-                dash.classList.add('hidden');
-                navBtn.classList.remove('hidden');
+                document.getElementById('dashboard').classList.add('hidden');
+                document.getElementById('admin-btn').classList.add('hidden');
+                document.getElementById('admin-panel').classList.add('hidden');
+                document.getElementById('login-nav').classList.remove('hidden');
             }
         });
+
+        // ADMIN UPDATE FUNCTION
+        window.updateBalance = async () => {
+            const uid = document.getElementById('target-uid').value;
+            const amt = document.getElementById('new-balance').value;
+            if(!uid || !amt) return alert("Fill all fields");
+            
+            try {
+                await setDoc(doc(db, "users", uid), { balance: Number(amt) }, { merge: true });
+                alert("Balance Updated Successfully!");
+                location.reload();
+            } catch (e) { alert("Error: " + e.message); }
+        };
 
         window.logout = () => signOut(auth);
     </script>
