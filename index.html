@@ -3,19 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BD-FX | Financial Engine</title>
+    <title>BD-FX | Smart Investment</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #0a0f1a; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #0a0f1a; color: white; }
         .glass { background: rgba(22, 27, 42, 0.8); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.05); }
+        .pkg-card { transition: all 0.3s ease; border: 1px solid rgba(59, 130, 246, 0.1); }
+        .pkg-card:hover { border-color: rgba(59, 130, 246, 0.5); transform: translateY(-5px); }
     </style>
 </head>
-<body class="text-white">
+<body>
 
-    <nav class="p-6 border-b border-gray-800 flex justify-between items-center sticky top-0 z-50 bg-[#0a0f1a]/90">
-        <div class="text-xl font-black italic">BD<span class="text-blue-500">-FX</span></div>
+    <nav class="p-6 border-b border-gray-800 flex justify-between items-center sticky top-0 z-50 bg-[#0a0f1a]/90 backdrop-blur-md">
+        <div class="text-xl font-black italic tracking-tighter text-blue-500">BD-FX</div>
         <div class="flex gap-2">
             <button id="admin-btn" onclick="toggleAdmin()" class="hidden text-[10px] font-bold text-yellow-500 border border-yellow-500/20 px-4 py-2 rounded-full uppercase">Admin</button>
             <button id="login-nav" onclick="toggleModal()" class="text-[10px] font-bold text-blue-500 border border-blue-500/20 px-4 py-2 rounded-full uppercase">Login</button>
@@ -23,91 +25,64 @@
     </nav>
 
     <div id="dashboard" class="hidden p-6 max-w-2xl mx-auto">
-        <div class="mb-6 text-center">
-            <h1 class="text-2xl font-black italic text-blue-500" id="user-display">USER</h1>
-            <p class="text-[10px] text-gray-500 uppercase tracking-widest" id="pkg-info">No Active Plan</p>
-        </div>
-
-        <div class="bg-gradient-to-br from-blue-600 to-indigo-800 p-8 rounded-[2.5rem] shadow-2xl mb-6 relative">
-            <p class="text-[10px] uppercase font-black text-blue-100 mb-1">Available Balance</p>
-            <h2 class="text-5xl font-black italic text-white">৳<span id="balance">0.00</span></h2>
-            <div class="flex gap-4 mt-6">
-                <button onclick="showPay('Deposit')" class="flex-1 bg-white/10 py-3 rounded-xl text-[10px] font-black uppercase">Deposit</button>
-                <button onclick="showPay('Withdraw')" class="flex-1 bg-white/10 py-3 rounded-xl text-[10px] font-black uppercase">Withdraw</button>
+        
+        <div class="bg-gradient-to-br from-blue-600 to-indigo-900 p-8 rounded-[2.5rem] shadow-2xl mb-8 text-center relative overflow-hidden">
+            <p class="text-[10px] uppercase font-black text-blue-100 mb-1 tracking-widest">Available Balance</p>
+            <h2 class="text-5xl font-black italic">৳<span id="user-balance">0.00</span></h2>
+            <div class="flex gap-3 mt-6">
+                <button onclick="showPay('Deposit')" class="flex-1 bg-white/10 py-3 rounded-xl text-[10px] font-bold uppercase">Deposit</button>
+                <button onclick="showPay('Withdraw')" class="flex-1 bg-white/10 py-3 rounded-xl text-[10px] font-bold uppercase">Withdraw</button>
             </div>
         </div>
 
-        <div class="glass p-6 rounded-[2rem] mb-6">
-            <div class="flex justify-between text-[10px] font-black mb-3">
-                <span class="text-gray-400 uppercase">Package Progress</span>
-                <span id="prog-text" class="text-blue-500">0/30 Days</span>
-            </div>
-            <div class="w-full bg-gray-800 h-2 rounded-full overflow-hidden">
-                <div id="prog-bar" class="bg-blue-500 h-full w-0 transition-all duration-1000"></div>
-            </div>
+        <div id="active-pkg-area" class="hidden mb-8">
+            <h3 class="text-[10px] font-black text-gray-500 uppercase mb-4 tracking-[0.2em]">Your Active Plans</h3>
+            <div id="active-list" class="space-y-4"></div>
         </div>
 
-        <div id="shop" class="space-y-4">
-            <h3 class="text-[10px] font-black text-gray-500 uppercase">Featured Package</h3>
-            <div class="glass p-6 rounded-[2rem] flex justify-between items-center">
-                <div>
-                    <h4 class="font-black text-lg" id="shop-pkg-name">Premium Starter</h4>
-                    <p class="text-xs text-gray-400">Invest: ৳<span id="shop-cost">300</span> | Daily: ৳<span id="shop-daily">25</span></p>
+        <div class="mb-20">
+            <h3 class="text-[10px] font-black text-gray-500 uppercase mb-4 tracking-[0.2em]">Available Packages</h3>
+            <div id="shop-list" class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 </div>
-                <button onclick="buyPackage()" class="bg-blue-600 px-6 py-3 rounded-xl font-black text-[10px] uppercase">Join</button>
-            </div>
         </div>
 
-        <button onclick="logout()" class="w-full mt-10 text-red-500 text-[10px] font-black uppercase tracking-[0.4em]">Sign Out</button>
-    </div>
-
-    <div id="pay-modal" class="fixed inset-0 bg-black/95 flex items-center justify-center p-6 hidden z-[110]">
-        <div class="glass p-8 rounded-[2.5rem] w-full max-w-sm text-center">
-            <img src="https://www.logo.wine/a/logo/BKash/BKash-Logo.wine.svg" class="w-32 mx-auto mb-4">
-            <h3 id="pay-title" class="text-xl font-black mb-2 uppercase">Deposit</h3>
-            <p class="text-xs text-gray-400 mb-6">Send Money to: <span class="text-pink-500 font-bold">017XXXXXXXX</span></p>
-            <input type="number" id="pay-amount" placeholder="Amount (৳)" class="w-full bg-black/40 p-4 rounded-xl border border-gray-800 mb-4 outline-none">
-            <input type="text" id="pay-trx" placeholder="Transaction ID / Number" class="w-full bg-black/40 p-4 rounded-xl border border-gray-800 mb-6 outline-none">
-            <button onclick="submitPay()" class="w-full bg-pink-600 py-4 rounded-xl font-black uppercase tracking-widest">Confirm Payment</button>
-            <button onclick="closePay()" class="mt-4 text-[10px] text-gray-500 uppercase">Cancel</button>
-        </div>
+        <button onclick="logout()" class="w-full text-red-500 text-[10px] font-black uppercase tracking-widest opacity-50">Sign Out</button>
     </div>
 
     <div id="admin-panel" class="hidden p-6 max-w-2xl mx-auto bg-gray-900 border border-yellow-500/20 mt-6 rounded-[2.5rem] mb-20">
-        <h2 class="text-yellow-500 font-black mb-6 uppercase italic">Admin Console</h2>
+        <h2 class="text-yellow-500 font-black mb-6 uppercase italic">Admin Portal</h2>
         
-        <div class="space-y-4 mb-8">
-            <p class="text-[10px] font-bold text-gray-500 uppercase">Adjust User Balance/UID</p>
-            <input type="text" id="adm-uid" placeholder="User UID" class="w-full bg-[#0a0f1a] p-4 rounded-xl border border-gray-800 text-sm">
-            <input type="number" id="adm-bal" placeholder="New Balance (৳)" class="w-full bg-[#0a0f1a] p-4 rounded-xl border border-gray-800 text-sm">
-            <button onclick="admUpdateBal()" class="w-full bg-yellow-500 text-black font-black py-4 rounded-xl uppercase text-xs">Update User</button>
+        <div class="space-y-4 mb-10 pb-10 border-b border-gray-800">
+            <p class="text-xs font-bold text-gray-400">Add New Package</p>
+            <input type="text" id="adm-pname" placeholder="Package Name" class="w-full bg-black/40 p-4 rounded-xl border border-gray-800 text-sm outline-none">
+            <div class="grid grid-cols-2 gap-4">
+                <input type="number" id="adm-pcost" placeholder="Price (৳)" class="bg-black/40 p-4 rounded-xl border border-gray-800 text-sm outline-none">
+                <input type="number" id="adm-pdaily" placeholder="Daily Profit (৳)" class="bg-black/40 p-4 rounded-xl border border-gray-800 text-sm outline-none">
+            </div>
+            <button onclick="addNewPackage()" class="w-full bg-blue-600 font-black py-4 rounded-xl uppercase text-xs">Publish Package</button>
         </div>
 
-        <div class="space-y-4 pt-6 border-t border-gray-800">
-            <p class="text-[10px] font-bold text-gray-500 uppercase">Global Package Settings</p>
-            <input type="text" id="adm-pkg-name" placeholder="Package Name" class="w-full bg-[#0a0f1a] p-4 rounded-xl border border-gray-800 text-sm">
-            <div class="flex gap-4">
-                <input type="number" id="adm-pkg-cost" placeholder="Cost (৳)" class="flex-1 bg-[#0a0f1a] p-4 rounded-xl border border-gray-800 text-sm">
-                <input type="number" id="adm-pkg-daily" placeholder="Daily (৳)" class="flex-1 bg-[#0a0f1a] p-4 rounded-xl border border-gray-800 text-sm">
-            </div>
-            <button onclick="admUpdatePkg()" class="w-full bg-blue-600 text-white font-black py-4 rounded-xl uppercase text-xs">Update Shop Package</button>
+        <div class="space-y-4">
+            <p class="text-xs font-bold text-gray-400">Add Money to User (Manual)</p>
+            <input type="text" id="adm-uid" placeholder="User UID" class="w-full bg-black/40 p-4 rounded-xl border border-gray-800 text-sm outline-none">
+            <input type="number" id="adm-amt" placeholder="Amount (৳)" class="w-full bg-black/40 p-4 rounded-xl border border-gray-800 text-sm outline-none">
+            <button onclick="addMoneyAdmin()" class="w-full bg-yellow-500 text-black font-black py-4 rounded-xl uppercase text-xs">Add Balance</button>
         </div>
     </div>
 
-    <div id="modal" class="fixed inset-0 bg-black/95 flex items-center justify-center p-6 hidden z-[100]">
+    <div id="modal" class="fixed inset-0 bg-black/95 flex items-center justify-center p-6 hidden z-[100] backdrop-blur-md">
         <div class="glass p-8 rounded-[2.5rem] w-full max-w-sm text-center">
-            <h2 class="text-2xl font-black mb-8 italic uppercase tracking-tighter text-blue-500">Access Portal</h2>
+            <h2 class="text-2xl font-black mb-8 italic uppercase tracking-tighter text-blue-500">Investor Login</h2>
             <input type="email" id="email" placeholder="Email" class="w-full bg-black/40 p-5 rounded-2xl border border-gray-800 mb-4 outline-none">
-            <input type="password" id="password" placeholder="Password" class="w-full bg-black/40 p-5 rounded-2xl border border-gray-800 mb-6 outline-none text-white">
+            <input type="password" id="password" placeholder="Password" class="w-full bg-black/40 p-5 rounded-2xl border border-gray-800 mb-6 outline-none">
             <button id="login-btn" class="w-full bg-blue-600 py-5 rounded-2xl font-black uppercase tracking-widest shadow-xl shadow-blue-900/40">Authorize</button>
-            <button onclick="toggleModal()" class="mt-6 text-[10px] text-gray-500 uppercase font-bold">Close</button>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, getDocs, arrayUnion, query, where } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCFpCE8khV-aedkVyGgrZY-yDXnHU9jhb4",
@@ -122,39 +97,39 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-
         const ADMIN_EMAIL = "admin@bdfx.com";
 
         window.toggleModal = () => document.getElementById('modal').classList.toggle('hidden');
         window.toggleAdmin = () => document.getElementById('admin-panel').classList.toggle('hidden');
-        window.showPay = (type) => {
-            document.getElementById('pay-title').innerText = type;
-            document.getElementById('pay-modal').classList.remove('hidden');
-        };
-        window.closePay = () => document.getElementById('pay-modal').classList.add('hidden');
 
         // LOGIN
         document.getElementById('login-btn').onclick = async () => {
             const email = document.getElementById('email').value;
             const pass = document.getElementById('password').value;
-            try {
-                await signInWithEmailAndPassword(auth, email, pass);
-                toggleModal();
-            } catch (e) { alert("Error: " + e.message); }
+            try { await signInWithEmailAndPassword(auth, email, pass); toggleModal(); } 
+            catch (e) { alert("Error: " + e.message); }
         };
 
-        // GLOBAL PACKAGE LOAD
+        // LOAD SHOP PACKAGES
         async function loadShop() {
-            const shopSnap = await getDoc(doc(db, "settings", "package"));
-            if (shopSnap.exists()) {
-                const s = shopSnap.data();
-                document.getElementById('shop-pkg-name').innerText = s.name;
-                document.getElementById('shop-cost').innerText = s.cost;
-                document.getElementById('shop-daily').innerText = s.daily;
-            }
+            const shopList = document.getElementById('shop-list');
+            shopList.innerHTML = "";
+            const querySnapshot = await getDocs(collection(db, "packages"));
+            querySnapshot.forEach((doc) => {
+                const p = doc.data();
+                shopList.innerHTML += `
+                    <div class="glass p-6 rounded-[2rem] pkg-card">
+                        <h4 class="font-black text-lg">${p.name}</h4>
+                        <p class="text-xs text-gray-400 mb-4">Earn ৳${p.daily}/day for 30 days</p>
+                        <div class="flex justify-between items-center border-t border-gray-800 pt-4">
+                            <span class="font-black text-blue-500">৳${p.price}</span>
+                            <button onclick="buyPackage('${doc.id}', ${p.price}, ${p.daily}, '${p.name}')" class="bg-blue-600 px-5 py-2 rounded-xl text-[10px] font-black uppercase">Buy</button>
+                        </div>
+                    </div>`;
+            });
         }
 
-        // AUTH & AUTO-EARNING
+        // LOAD USER DASHBOARD
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 document.getElementById('dashboard').classList.remove('hidden');
@@ -162,69 +137,109 @@
                 if(user.email === ADMIN_EMAIL) document.getElementById('admin-btn').classList.remove('hidden');
                 
                 await loadShop();
-                const userRef = doc(db, "users", user.uid);
-                const snap = await getDoc(userRef);
-
-                if (snap.exists()) {
-                    let data = snap.data();
-                    let bal = data.balance || 0;
-                    
-                    if (data.pDate) {
-                        const start = data.pDate.toDate();
-                        const days = Math.min(Math.floor((new Date() - start) / (1000*60*60*24)), 30);
-                        const earning = days * (data.dRate || 0);
-                        
-                        if (earning > (data.claimed || 0)) {
-                            bal += (earning - (data.claimed || 0));
-                            await updateDoc(userRef, { balance: bal, claimed: earning });
-                        }
-
-                        document.getElementById('pkg-info').innerText = `Active: ${data.pName} (${days}/30 Days)`;
-                        document.getElementById('prog-bar').style.width = (days/30*100) + "%";
-                        document.getElementById('prog-text').innerText = `${days}/30 Days`;
-                    }
-                    document.getElementById('user-display').innerText = user.email.split('@')[0].toUpperCase();
-                    document.getElementById('balance').innerText = bal.toLocaleString();
-                }
+                await refreshUser();
             } else {
                 document.getElementById('dashboard').classList.add('hidden');
                 document.getElementById('login-nav').classList.remove('hidden');
             }
         });
 
-        // BUY
-        window.buyPackage = async () => {
-            const cost = Number(document.getElementById('shop-cost').innerText);
-            const daily = Number(document.getElementById('shop-daily').innerText);
-            const name = document.getElementById('shop-pkg-name').innerText;
-            if(confirm(`Invest ৳${cost}?`)) {
-                await setDoc(doc(db, "users", auth.currentUser.uid), {
-                    pName: name, cost: cost, dRate: daily, pDate: new Date(), claimed: 0, balance: 0
-                }, { merge: true });
-                location.reload();
+        async function refreshUser() {
+            const user = auth.currentUser;
+            const snap = await getDoc(doc(db, "users", user.uid));
+            if (!snap.exists()) return;
+            
+            const data = snap.data();
+            document.getElementById('user-balance').innerText = (data.balance || 0).toLocaleString();
+            
+            const activeList = document.getElementById('active-list');
+            activeList.innerHTML = "";
+            const packages = data.activePackages || [];
+            
+            if(packages.length > 0) {
+                document.getElementById('active-pkg-area').classList.remove('hidden');
+                packages.forEach((p, index) => {
+                    const today = new Date().setHours(0,0,0,0);
+                    const lastClaim = p.lastClaimDate ? p.lastClaimDate.toDate().setHours(0,0,0,0) : 0;
+                    const canClaim = today > lastClaim;
+
+                    activeList.innerHTML += `
+                        <div class="glass p-5 rounded-2xl flex justify-between items-center border-l-4 border-blue-500">
+                            <div>
+                                <p class="text-[10px] font-bold text-gray-500 uppercase">${p.name}</p>
+                                <p class="text-xs">Daily Profit: ৳${p.daily}</p>
+                            </div>
+                            <button onclick="claimProfit(${index})" ${!canClaim ? 'disabled' : ''} 
+                                class="px-4 py-2 rounded-lg text-[10px] font-black uppercase ${canClaim ? 'bg-green-600' : 'bg-gray-700 text-gray-400'}">
+                                ${canClaim ? 'Claim ৳' + p.daily : 'Claimed'}
+                            </button>
+                        </div>`;
+                });
+            }
+        }
+
+        // BUY PACKAGE (Subtracts from balance)
+        window.buyPackage = async (id, price, daily, name) => {
+            const user = auth.currentUser;
+            const userRef = doc(db, "users", user.uid);
+            const snap = await getDoc(userRef);
+            const currentBalance = snap.data().balance || 0;
+
+            if (currentBalance < price) return alert("Insufficient Balance! Please Deposit first.");
+
+            if (confirm(`Purchase ${name} for ৳${price}?`)) {
+                await updateDoc(userRef, {
+                    balance: currentBalance - price,
+                    activePackages: arrayUnion({
+                        id: id,
+                        name: name,
+                        daily: daily,
+                        purchaseDate: new Date(),
+                        lastClaimDate: null
+                    })
+                });
+                alert("Purchase Successful!");
+                refreshUser();
             }
         };
 
-        // ADMIN FUNCTIONS
-        window.admUpdateBal = async () => {
+        // CLAIM PROFIT
+        window.claimProfit = async (index) => {
+            const user = auth.currentUser;
+            const userRef = doc(db, "users", user.uid);
+            const snap = await getDoc(userRef);
+            let data = snap.data();
+            let pkgs = [...data.activePackages];
+            
+            pkgs[index].lastClaimDate = new Date();
+            await updateDoc(userRef, {
+                balance: (data.balance || 0) + pkgs[index].daily,
+                activePackages: pkgs
+            });
+            
+            alert(`৳${pkgs[index].daily} added to your balance!`);
+            refreshUser();
+        };
+
+        // ADMIN: ADD PACKAGE TO SHOP
+        window.addNewPackage = async () => {
+            const name = document.getElementById('adm-pname').value;
+            const price = Number(document.getElementById('adm-pcost').value);
+            const daily = Number(document.getElementById('adm-pdaily').value);
+            if(!name || !price) return;
+            await setDoc(doc(collection(db, "packages")), { name, price, daily });
+            alert("Package Published!");
+            loadShop();
+        };
+
+        // ADMIN: ADD MONEY TO USER
+        window.addMoneyAdmin = async () => {
             const uid = document.getElementById('adm-uid').value;
-            const bal = document.getElementById('adm-bal').value;
-            await updateDoc(doc(db, "users", uid), { balance: Number(bal) });
-            alert("Balance Updated!");
-        };
-
-        window.admUpdatePkg = async () => {
-            const n = document.getElementById('adm-pkg-name').value;
-            const c = document.getElementById('adm-pkg-cost').value;
-            const d = document.getElementById('adm-pkg-daily').value;
-            await setDoc(doc(db, "settings", "package"), { name: n, cost: Number(c), daily: Number(d) });
-            alert("Shop Updated!");
-            location.reload();
-        };
-
-        window.submitPay = () => {
-            alert("Request Submitted! Admin will verify TrxID and add balance manually.");
-            closePay();
+            const amt = Number(document.getElementById('adm-amt').value);
+            const userRef = doc(db, "users", uid);
+            const snap = await getDoc(userRef);
+            await updateDoc(userRef, { balance: (snap.data().balance || 0) + amt });
+            alert("Money Added!");
         };
 
         window.logout = () => signOut(auth);
